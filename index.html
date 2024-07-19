@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Taking App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #80deea);
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007BFF;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input[type="password"] {
+            padding-right: 40px;
+        }
+
+        .password-container .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #007BFF;
+            transition: color 0.3s ease;
+        }
+
+        .password-container .toggle-password:hover {
+            color: #0056b3;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        #note-form {
+            margin-bottom: 20px;
+        }
+
+        #note-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        #note-input:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        #note-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #note-list li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        #note-list li:hover {
+            background-color: #f1f1f1;
+        }
+
+        #note-list li button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            display: none;
+        }
+
+        #note-list li:hover button {
+            display: inline-block;
+        }
+
+        #note-list .edit-btn {
+            background-color: green;
+            color: white;
+        }
+
+        #note-list .edit-btn:hover {
+            background-color: darkgreen;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        #note-list .delete-btn {
+            background-color: red;
+            color: white;
+        }
+
+        #note-list .delete-btn:hover {
+            background-color: darkred;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        #logout-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #09512a;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #logout-btn:hover {
+            background-color: #09512a;
+            transform: scale(1.005);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                font-size: 14px;
+            }
+
+            button[type="submit"] {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="register-view">
+            <h1>Register</h1>
+            <form id="register-form">
+                <input type="text" id="register-name" placeholder="Enter your name" required>
+                <input type="email" id="register-email" placeholder="Enter your email" required>
+                <div class="password-container">
+                    <input type="password" id="register-password" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-password" data-target="register-password">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+                <div id="password-hint" class="hint">
+                    <p>Password must be at least 8 characters long!</p>
+                    <p>It should be mix of upper and lower case!</p>
+                    <p>It must have a special charector!</p>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" id="login-link">Login here</a>.</p>
+        </div>
+
+        <div id="login-view" style="display: none;">
+            <h1>Login</h1>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Enter your email" required>
+                <div class="password-container">
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-password" data-target="login-password">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="register-link">Register here</a>.</p>
+            <p>Forgot Password? <a href="#" id="forgot-password-link">Click here</a>.</p>
+        </div>
+
+        <div id="forgot-password-view" style="display: none;">
+            <h1>Reset Password</h1>
+            <form id="forgot-password-form">
+                <div class="password-container">
+                    <input type="password" id="new-password" placeholder="Enter new password" required>
+                    <button type="button" class="toggle-password" data-target="new-password">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+                <div class="password-container">
+                    <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+                    <button type="button" class="toggle-password" data-target="confirm-password">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+                <button type="submit">Reset Password</button>
+            </form>
+            <p>Remembered your password? <a href="#" id="back-to-login-link">Login here</a>.</p>
+        </div>
+
+        <div id="notes-view" style="display: none; position: relative;">
+            <h1>Your notes are here! </h1>
+            <form id="note-form">
+                <input type="text" id="note-input" placeholder="Enter your note" required>
+                <button type="submit">Add Note</button>
+            </form>
+            <ul id="note-list"></ul>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const registerForm = document.getElementById('register-form');
+            const loginForm = document.getElementById('login-form');
+            const forgotPasswordForm = document.getElementById('forgot-password-form');
+            const registerEmail = document.getElementById('register-email');
+            const registerPassword = document.getElementById('register-password');
+            const loginEmail = document.getElementById('login-email');
+            const loginPassword = document.getElementById('login-password');
+            const newPassword = document.getElementById('new-password');
+            const confirmPassword = document.getElementById('confirm-password');
+            const noteForm = document.getElementById('note-form');
+            const noteInput = document.getElementById('note-input');
+            const noteList = document.getElementById('note-list');
+            const notesView = document.getElementById('notes-view');
+            const loginView = document.getElementById('login-view');
+            const registerView = document.getElementById('register-view');
+            const forgotPasswordView = document.getElementById('forgot-password-view');
+
+            const user = {
+                email: null,
+                password: null
+            };
+
+            function showView(view) {
+                loginView.style.display = 'none';
+                registerView.style.display = 'none';
+                forgotPasswordView.style.display = 'none';
+                notesView.style.display = 'none';
+                view.style.display = 'block';
+            }
+
+            function togglePasswordVisibility(target) {
+                const passwordField = document.getElementById(target);
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+            }
+
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', () => {
+                    togglePasswordVisibility(button.getAttribute('data-target'));
+                });
+            });
+
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = registerEmail.value;
+                const password = registerPassword.value;
+                user.email = email;
+                user.password = password;
+                alert('Registration successful! Please log in.');
+                showView(loginView);
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = loginEmail.value;
+                const password = loginPassword.value;
+                if (email === user.email && password === user.password) {
+                    showView(notesView);
+                } else {
+                    alert('Invalid email or password.');
+                }
+            });
+
+            forgotPasswordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (newPassword.value === confirmPassword.value) {
+                    user.password = newPassword.value;
+                    alert('Password reset successful! Please log in.');
+                    showView(loginView);
+                } else {
+                    alert('Passwords do not match.');
+                }
+            });
+
+            noteForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const noteText = noteInput.value.trim();
+                if (noteText) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${noteText}</span>
+                        <div>
+                            <button class="edit-btn">Edit</button>
+                            <button class="delete-btn">Delete</button>
+                        </div>
+                    `;
+                    noteList.appendChild(li);
+                    noteInput.value = '';
+                    const editBtn = li.querySelector('.edit-btn');
+                    const deleteBtn = li.querySelector('.delete-btn');
+                    editBtn.addEventListener('click', () => {
+                        const newText = prompt('Edit your note:', li.firstChild.textContent);
+                        if (newText) {
+                            li.firstChild.textContent = newText;
+                        }
+                    });
+                    deleteBtn.addEventListener('click', () => {
+                        li.remove();
+                    });
+                }
+            });
+
+            document.getElementById('register-link').addEventListener('click', () => {
+                showView(registerView);
+            });
+
+            document.getElementById('login-link').addEventListener('click', () => {
+                showView(loginView);
+            });
+
+            document.getElementById('forgot-password-link').addEventListener('click', () => {
+                showView(forgotPasswordView);
+            });
+
+            document.getElementById('back-to-login-link').addEventListener('click', () => {
+                showView(loginView);
+            });
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                showView(loginView);
+            });
+        });
+    </script>
+</body>
+</html>
